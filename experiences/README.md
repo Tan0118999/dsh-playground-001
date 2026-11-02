@@ -55,9 +55,9 @@
 
 | 你看到的现象 | 先读 |
 | --- | --- |
-| 想复现 DSH 创造模式视频里的“模型可视化/模型架构示意图”插件，找不到提示词原文 | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
-| 提示词粘进 dsh 后，一次生成的效果和视频不一样 | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
-| 找不到创造模式入口，或不确定生成物装在哪里 | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
+| 想画自己模型的全流程架构图，官方提示词却只覆盖 Transformer | [任意模型架构示意图](dsh-creator-mode/dsh-model-architecture-visualization.md) |
+| 生成的架构图只有模块名，缺上下游、token 构成和消费端 | [任意模型架构示意图](dsh-creator-mode/dsh-model-architecture-visualization.md) |
+| 不知道 agent 该从工作目录哪些文件、按什么结构整理模型信息 | [任意模型架构示意图](dsh-creator-mode/dsh-model-architecture-visualization.md) |
 
 ## 图编译按类别
 
@@ -84,7 +84,7 @@
 
 | 类别 | 条目 |
 | --- | --- |
-| 方法（1） | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
+| 方法（1） | [任意模型架构示意图](dsh-creator-mode/dsh-model-architecture-visualization.md) |
 
 ## 怎么读一条经验
 

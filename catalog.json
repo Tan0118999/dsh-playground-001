@@ -11,30 +11,31 @@
   ],
   "entries": [
     {
-      "name": "dsh-creator-model-architecture-prompt",
-      "title": "DSH 创造模式做“模型架构可视化”插件：官方提示词原文与用法",
-      "description": "想在 DeepSeek Harness 里用一句提示词生成“模型架构示意图/模型可视化”插件时读这条：收录官方创造模式提示词合集里 Transformer 3D 可视化的中英文原文，说明创造模式的入口、粘贴与迭代方式、生成物怎么验收，并指出该合集并没有单独命名为“模型架构示意图”的条目。",
+      "name": "dsh-model-architecture-visualization",
+      "title": "用 DSH 插件画出任意模型的架构示意图：全流程、上下游、token 构成与消费端",
+      "description": "想让 DSH 画出自己模型的全流程架构示意图、又不想每次换模型就改提示词时读这条：给出 agent 从工作目录的模型项目文件提取信息的步骤、可替换的 JSON 清单契约、通用创造模式提示词模板和验收清单；换模型只换清单，不在插件里硬编码结构。",
       "category": "methodology",
       "tags": [
         "dsh",
         "creator-mode",
-        "prompt",
         "model-visualization",
         "architecture-diagram",
+        "token-budget",
         "plugin",
-        "cordis"
+        "cordis",
+        "data-contract"
       ],
       "symptoms": [
-        "想复现 DSH 创造模式视频里的“模型可视化/模型架构示意图”插件，找不到提示词原文",
-        "把提示词粘进 dsh 后，一次生成的插件和视频效果不一样，不知道是提示词问题还是 one-shot 差异",
-        "找不到 dsh 的创造模式入口，或不确定生成物装到了哪里、怎么再打开"
+        "官方提示词只覆盖 Transformer，想画自己项目里的模型架构",
+        "生成的图只有模块名，看不到上下游依赖、token 长度构成和消费端",
+        "不知道 agent 该从工作目录的哪些文件、按什么结构整理这些信息"
       ],
       "stacks": [
         "dsh",
         "cordis"
       ],
-      "updated": "2026-11-02",
-      "path": "experiences/dsh-creator-mode/dsh-creator-model-architecture-prompt.md"
+      "updated": "2026-11-03",
+      "path": "experiences/dsh-creator-mode/dsh-model-architecture-visualization.md"
     },
     {
       "name": "gpu-compile-triage",

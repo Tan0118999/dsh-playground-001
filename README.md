@@ -6,7 +6,7 @@
 
 - **GPU 图编译 debug（16 条）**：`torch.compile`/TorchInductor、Triton、TVM、XLA/JAX，以及 compute-sanitizer、cuda-gdb、Nsight、SASS/PTX 等底层工具；
 - **GPU Profiling 与性能分析（15 条）**：Nsight Systems/Compute、PyTorch Profiler、roofline/occupancy、访存与 stall、测量方法、权限/容器和跨平台工具。
-- **DSH 创造模式与插件提示词（1 条）**：官方创造模式提示词原文、入口位置与生成物验收。
+- **DSH 创造模式与插件提示词（1 条）**：官方提示词原文、任意模型架构示意图的 JSON 清单契约、通用提示词模板与验收。
 
 另有一个可复现的 [`toolbox/gpu-profiling-demo`](toolbox/gpu-profiling-demo/README.md)，用真实 CUDA workload 覆盖 memory-bound、compute-bound、coalescing、launch-bound 和多流 overlap。
 
@@ -89,13 +89,13 @@
 
 | 类别 | 条目 | 解决什么 | 典型症状 |
 | --- | --- | --- | --- |
-| 方法 | [DSH 创造模式做“模型架构可视化”插件：官方提示词原文与用法](experiences/dsh-creator-mode/dsh-creator-model-architecture-prompt.md) | 用官方提示词生成模型可视化插件，并搞清入口、迭代和验收 | 找不到“模型架构示意图”提示词；生成效果与视频不一致 |
+| 方法 | [用 DSH 插件画出任意模型的架构示意图：全流程、上下游、token 构成与消费端](experiences/dsh-creator-mode/dsh-model-architecture-visualization.md) | 把本地模型项目整理成清单，用通用提示词生成可视化插件 | 官方提示词只覆盖 Transformer；图缺上下游、token 构成和消费端 |
 
 ## 内容状态与边界
 
 - 图编译条目由公开文档和通用调试实践整理，仓库没有 GPU CI，未逐条在本机 GPU 环境实测；
 - Profiling 主题的 nsys 时间线、demo 数字和截图为真实采集；本机 WSL2 未开放 ncu 性能计数器，ncu 条目属于“官方文档 + CLI 元数据 + 通用经验”，未做本机实测。详见 [Profiling 主题说明](experiences/gpu-profiling/README.md)。
-- DSH 主题的提示词逐字来自官方公开页面，入口位置按本机 dsh 0.2.1-rc.3 核对；改写示例标注“未实测”，没有逐条复现视频效果。
+- DSH 主题的官方提示词逐字来自公开页面，入口位置按本机 dsh 0.2.1-rc.3 核对；清单契约和提示词模板是通用设计建议，没有逐条在本机生成插件实测。
 - 每条目末尾列出参考来源；使用前请按条目里的“快速判断”确认版本行为。
 - 命令、环境变量默认值和报错文本会随 PyTorch、Triton、TVM、XLA、CUDA 版本变化；无法确定版本的结论会标注“推断/待验证”。
 - 不包含私有代码、客户数据、凭据或内部链接。
