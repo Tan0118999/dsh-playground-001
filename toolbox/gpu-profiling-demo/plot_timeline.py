@@ -191,6 +191,11 @@ if __name__ == "__main__":
     db, outdir = sys.argv[1], sys.argv[2]
     os.makedirs(outdir, exist_ok=True)
     nvtx, kernels, copies = load(db)
+    if len(nvtx) < 5:
+        sys.exit(
+            "error: expected 5 NVTX phases (phase 1..5); "
+            "rebuild with -DUSE_NVTX and a working NVTX library"
+        )
     full_figure(nvtx, kernels, copies, os.path.join(outdir, "timeline-full.png"))
     matmul_figure(nvtx, kernels, os.path.join(outdir, "timeline-matmul.png"))
     overlap_figure(nvtx, kernels, copies, os.path.join(outdir, "timeline-overlap.png"))

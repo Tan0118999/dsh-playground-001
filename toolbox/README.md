@@ -15,6 +15,8 @@ cd toolbox/gpu-profiling-demo
 
 说明见 [`gpu-profiling-demo/README.md`](gpu-profiling-demo/README.md)，对应经验见 [`experiences/gpu-profiling/`](../experiences/gpu-profiling/README.md)。
 
+> 这是唯一需要 GPU 的 toolbox 项，作为复现实验保留；它不进入默认 CI。下面的“添加工具的要求”针对默认工具链。
+
 ### `build_catalog.py`
 
 构建并校验机器可读索引 `catalog.json`，同时检查每个条目都能从 `experiences/README.md` 找到。只依赖 Python 标准库。
