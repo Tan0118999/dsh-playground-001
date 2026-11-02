@@ -2,6 +2,15 @@
 
 本仓库是**经验库**，不是应用代码。Agent 消费内容来排查问题，或维护条目。以下约定同时适用于两类工作。
 
+## 分支与 MR 流程
+
+仓库用 `develop` 做日常集成、`main` 做稳定版本：
+
+- 新任务从最新 `develop` 切分支，命名 `<type>-<短描述>`（`type` 用 `issue`、`feature`、`bugfix` 等），例如 `issue-4-develop-workflow`；不要直接改 `develop` 或 `main`。
+- 任务完成后向 `develop` 提 MR，写清变更与验证方式，并请求 @Tan0118999 检视。
+- 只有 @Tan0118999 明确要求时，才把 `develop` 合入 `main`。
+- 详细规则见 [CONTRIBUTING.md 的分支与协作流程](CONTRIBUTING.md#分支与协作流程)。
+
 ## 消费：检索与使用
 
 1. 先读 `catalog.json`（机器索引）或 `experiences/README.md`（人读索引），不要通读整个仓库。

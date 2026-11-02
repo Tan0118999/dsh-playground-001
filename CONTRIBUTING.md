@@ -2,6 +2,32 @@
 
 本仓库是经验库：内容按“可检索、可执行、可验证”的标准组织。新增或修改条目时，请先读本文件，再参考 `templates/experience.md`。
 
+## 分支与协作流程
+
+仓库使用两条长期分支：
+
+- `main`：稳定分支，保持可发布状态；只有 @Tan0118999 明确要求时，才把 `develop` 合入 `main`。
+- `develop`：日常集成分支；任务分支从它切出，任务完成后也向它提 MR。
+
+新建任务时：
+
+1. 同步 `develop` 并切出任务分支：
+
+   ```bash
+   git fetch origin
+   git switch develop
+   git pull --ff-only
+   git switch -c issue-4-develop-workflow   # <type>-<短描述>
+   ```
+
+2. 任务分支命名 `<type>-<短描述>`，`type` 取 `issue`、`feature`、`bugfix` 等，例如 `feature-gpu-profile-guide`、`bugfix-catalog-check`。
+3. 在任务分支上提交，不要直接向 `develop` 或 `main` 推送。
+4. 任务完成并自测通过后，从任务分支向 `develop` 提 MR；描述写清变更内容、验证方式和已知风险。
+5. 请求 @Tan0118999 检视 MR，评审通过后由评审人合并到 `develop`。
+6. 除非 @Tan0118999 明确要求，不要发起或执行 `develop` → `main` 的合并。
+
+任务分支合入 `develop` 后即可删除；`develop` 与 `main` 的同步只在 @Tan0118999 要求时进行。
+
 ## 收录标准
 
 一条经验值得入库，需要同时满足：

@@ -99,4 +99,4 @@ python3 toolbox/build_catalog.py          # 新增/删除条目后重写 catalog
 python3 toolbox/build_catalog.py --check  # 校验索引是否最新
 ```
 
-收录标准、frontmatter 字段和写作要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+收录标准、frontmatter 字段、写作要求和分支/MR 流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
