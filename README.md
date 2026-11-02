@@ -1,6 +1,6 @@
 # 经验库（Experience Library）
 
-面向工程师和 AI agent 的可复用调试经验库。每条经验按“症状驱动”组织：**什么现象 → 怎么快速判断 → 根因机制 → 怎么排查 → 怎么修 → 怎么验证**，可以直接当作检查清单使用。
+面向工程师和 AI agent 的可复用调试经验库。每条经验按“症状驱动”组织：**什么现象 → 怎么快速判断 → 根因机制 → 怎么排查 → 怎么修 → 怎么验证**，可以直接当作检查清单使用。条目 frontmatter 提供 `name`/`description`/`symptoms`/`tags`，便于像 skill 一样检索和按需加载。
 
 当前首批收录 **GPU 图编译 debug 经验 16 条**，覆盖 `torch.compile`/TorchInductor、Triton、TVM、XLA/JAX，以及底层 CUDA 工具链（compute-sanitizer、cuda-gdb、Nsight、SASS/PTX 检查）。后续可以按主题继续扩展，也可以加入 toolbox 类可执行工具。
 

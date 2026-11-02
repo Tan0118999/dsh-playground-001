@@ -34,7 +34,7 @@ updated: 2026-11-02
 
 ## 快速判断
 
-1. **确认是否真的启用**：看 Inductor 日志/`TORCH_LOGS=+inductor`，确认 cudagraph 没有被跳过。
+1. **确认是否真的启用**：看 `TORCH_LOGS=perf_hints`，确认 cudagraph 没有被跳过。
 2. **打开同步告警**：`torch.cuda.set_sync_debug_mode("warn")`，捕获期出现同步操作会给出提示。
 3. **关闭 cudagraph 对比**：`mode="default"` 或关闭对应 config，若问题消失，锁定在图捕获。
 4. **最小捕获复现**：脱离 `torch.compile`，用 `torch.cuda.CUDAGraph` 捕获单层/单算子，复现后再加回复杂度。
