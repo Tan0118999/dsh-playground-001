@@ -64,10 +64,10 @@ GPU 性能分析只有三层，**永远从最外层开始**：
 | 阶段 | 实测（原生） | 说明 |
 | --- | --- | --- |
 | vector add | 0.32–0.39 ms，510–625 GB/s（多数 0.32–0.34 / 600–625） | 多数运行达到 672 GB/s 峰值的 90%–93% |
-| matmul naive | 20.7–22.6 ms / 20 次，1.9–2.1 TFLOP/s | 约为 30.9 TFLOP/s FP32 峰值的 6.2%–6.7% |
+| matmul naive | 20.4–22.6 ms / 20 次，1.9–2.1 TFLOP/s | 约为 30.9 TFLOP/s FP32 峰值的 6.2%–6.8% |
 | transpose naive → tiled | 0.037–0.038 ms（220–228 GB/s）→ 0.013–0.022 ms（387–622 GB/s） | 只改 shared-memory tiling，约 2×（1.7–3.4×） |
 | 500 个 tiny kernel | 3–10 ms（波动大），kernel 自身合计仅约 0.25 ms | launch/工具开销主导 |
-| overlap | 10.3–11.5 ms | 10 次 matmul 与 128 MiB 拷贝重叠 |
+| overlap | 10.2–11.5 ms | 10 次 matmul 与 128 MiB 拷贝重叠 |
 
 真实 trace 的结构：
 

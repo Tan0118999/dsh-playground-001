@@ -151,7 +151,7 @@ gap 前紧挨着 `cudaDeviceSynchronize` → 同步等待；gap 期间 CPU 在�
 ### 第 8–9 分钟：拷贝和 overlap
 
 - memcpy 和 kernel 是否在同一 stream？同 stream 会串行；
-- copy engine 行是否在 kernel 运行时也忙？
+- CUDA HW 里的 memcpy 块是否在 kernel 运行时也出现？
 - H2D/D2H 是否阻塞？`cudaMemcpy` 同步版会阻塞 host，`cudaMemcpyAsync` 才可能异步。
 
 ### 第 10 分钟：warnings 和 baseline
@@ -166,7 +166,7 @@ gap 前紧挨着 `cudaDeviceSynchronize` → 同步等待；gap 期间 CPU 在�
 | 空白前后有长同步调用 | 同步点太多/隐式同步 | 去掉不必要的 `.item()`/`.cpu()`/print |
 | 每个 kernel 几微秒，数量成百上千 | launch overhead | 融合、batch、CUDA Graphs |
 | memcpy 和 kernel 同 stream 交替 | 串行拷贝 | 独立 stream + async copy |
-| 拷贝行和 kernel 行同时有活 | copy engine 与 SM 重叠 | 好事；看是否还有串行段 |
+| 拷贝块和 kernel 同时有活 | copy engine 与 SM 重叠 | 好事；看是否还有串行段 |
 | 一个 kernel 占 90% | 单 kernel 瓶颈 | 进 ncu |
 | 周期性 gap | dataloader/周期同步/日志 | CPU 采样、torch profiler |
 | 启动阶段很长 | 模块加载/JIT/allocator/编译 | 预热，区分首次和稳态 |
