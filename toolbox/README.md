@@ -17,6 +17,22 @@ cd toolbox/gpu-profiling-demo
 
 > 这是唯一需要 GPU 的 toolbox 项，作为复现实验保留；它不进入默认 CI。下面的“添加工具的要求”针对默认工具链。
 
+### `dsh-html-experience/`
+
+一个可安装的 DSH 插件（cordis 插件 + 无依赖 CLI）：接收任意提示词，把指定的经验条目渲染成自包含的 HTML 阅读页，带四套风格预设和页面内读者样式面板。
+
+```bash
+# 在 DSH 里安装到某个 profile
+dsh plugin --profile <profile> add file:$PWD/toolbox/dsh-html-experience
+
+# 不装 DSH 也能直接生成
+node toolbox/dsh-html-experience/bin/html-experience.js \
+  --doc experiences/dsh-creator-mode/dsh-model-architecture-visualization.md \
+  --prompt "给第一次用创造模式做插件的人" --style paper --out /tmp/reading.html
+```
+
+不需要 `npm install`；测试用 `cd toolbox/dsh-html-experience && node --test test/*.test.js`。说明见 [`dsh-html-experience/README.md`](dsh-html-experience/README.md)。
+
 ### `build_catalog.py`
 
 构建并校验机器可读索引 `catalog.json`，同时检查每个条目都能从 `experiences/README.md` 找到。只依赖 Python 标准库。
@@ -30,7 +46,7 @@ python3 toolbox/build_catalog.py --check  # 校验索引是否最新
 
 ## 添加工具的要求
 
-- 单文件、标准库优先，避免要求用户安装额外依赖。
+- 单文件、标准库优先，避免要求用户安装额外依赖；DSH 插件/前端演示这类确实需要多文件的工具可以建子目录，自带 README、测试和安装说明。
 - 顶部 docstring 写明用途、用法、输入输出和失败行为。
 - 默认只读或幂等；会修改文件的工具必须提供 `--check` 或 `--dry-run`。
 - 不依赖 GPU 才能运行；需要 GPU 的工具在文档中明确标注。

@@ -1,0 +1,8 @@
+# dsh-html-experience bundle layer: one plugin entry registering the
+# `html_experience` tool and the `/html` command. The plugin needs the
+# `tools`, `commands`, `fs` and `workingDirectory` services, all provided by
+# the base profile. It has no configuration; style defaults are per request
+# and reader-selectable in the generated page.
+- insert:
+    - id: html-experience
+      name: dsh-html-experience

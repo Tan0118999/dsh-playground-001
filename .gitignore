@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# DSH plugin sources: the generic Python `lib/` ignore above must not hide them.
+!toolbox/dsh-html-experience/lib/
+!toolbox/dsh-html-experience/lib/**

@@ -8,7 +8,7 @@
 - **GPU Profiling 与性能分析（15 条）**：Nsight Systems/Compute、PyTorch Profiler、roofline/occupancy、访存与 stall、测量方法、权限/容器和跨平台工具。
 - **DSH 创造模式与插件提示词（1 条）**：官方提示词原文、任意模型架构示意图的 JSON 清单契约、通用提示词模板与验收。
 
-另有一个可复现的 [`toolbox/gpu-profiling-demo`](toolbox/gpu-profiling-demo/README.md)，用真实 CUDA workload 覆盖 memory-bound、compute-bound、coalescing、launch-bound 和多流 overlap。
+另有一个可复现的 [`toolbox/gpu-profiling-demo`](toolbox/gpu-profiling-demo/README.md)，用真实 CUDA workload 覆盖 memory-bound、compute-bound、coalescing、launch-bound 和多流 overlap；以及一个可安装的 DSH 插件 [`toolbox/dsh-html-experience`](toolbox/dsh-html-experience/README.md)，把指定经验条目渲染成带风格预设的独立 HTML 阅读页。
 
 ## 目录结构
 
@@ -27,6 +27,7 @@
 │   └── dsh-creator-mode/     # DSH 创造模式与插件提示词
 └── toolbox/                  # 可复用脚本与 demo
     ├── build_catalog.py
+    ├── dsh-html-experience/  # DSH 插件：经验条目 -> HTML 阅读页
     └── gpu-profiling-demo/
 ```
 
