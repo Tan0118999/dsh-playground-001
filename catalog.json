@@ -1,0 +1,459 @@
+{
+  "schema_version": 1,
+  "count": 16,
+  "categories": [
+    "methodology",
+    "compile",
+    "crash",
+    "correctness",
+    "performance",
+    "engineering"
+  ],
+  "entries": [
+    {
+      "name": "gpu-compile-triage",
+      "title": "GPU 图编译问题分层定位总纲",
+      "description": "GPU 图编译或执行出现报错、崩溃、结果错误、性能回退时，先用“环境—捕获—编译—加载—执行”分层和最小化流程确定问题层，再进入对应专题。适用于 torch.compile、Triton、TVM、XLA/JAX 和底层 CUDA 工具链。",
+      "category": "methodology",
+      "tags": [
+        "triage",
+        "torch.compile",
+        "triton",
+        "tvm",
+        "xla",
+        "cuda",
+        "debugging"
+      ],
+      "symptoms": [
+        "有 Python traceback，但不确定问题在前端、编译器还是 runtime",
+        "报错指向底层 CUDA，但复现不稳定，或换个无关调用才报错",
+        "编译能过，运行时崩溃、卡住或结果不对",
+        "能跑但性能明显回退，不知道先看哪一层"
+      ],
+      "stacks": [
+        "torch.compile",
+        "triton",
+        "tvm",
+        "xla",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/gpu-compile-triage.md"
+    },
+    {
+      "name": "minimal-repro",
+      "title": "最小复现与配置二分：把 GPU 图编译问题缩到可提交",
+      "description": "需要定位或向上游报告 GPU 图编译问题时，用“固定输入—剥离模型—配置二分—版本二分”得到单文件可运行的最小复现，并收集日志、IR、环境矩阵和期望/实际结果。",
+      "category": "methodology",
+      "tags": [
+        "repro",
+        "bisect",
+        "torch.compile",
+        "triton",
+        "tvm",
+        "xla",
+        "debugging"
+      ],
+      "symptoms": [
+        "大模型能复现、小图不能复现",
+        "换个 shape/进程/机器就不复现",
+        "需要向 PyTorch/Triton/TVM/XLA 上游报 bug",
+        "不知道该收集哪些证据才能让别人复现"
+      ],
+      "stacks": [
+        "torch.compile",
+        "triton",
+        "tvm",
+        "xla",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/minimal-repro.md"
+    },
+    {
+      "name": "torch-compile-backend-error",
+      "title": "torch.compile 后端报错：BackendCompilerFailed、graph break 与重编译",
+      "description": "torch.compile 首次运行抛出 BackendCompilerFailed、SubgraphLoweringException、OperatorIssue 或 Inductor 内部异常时，按“Dynamo 捕获—AOTAutograd—Inductor lowering/codegen”分层定位，并用 explain、日志、ablation backend 和 minifier 缩到最小复现。",
+      "category": "compile",
+      "tags": [
+        "torch.compile",
+        "dynamo",
+        "inductor",
+        "graph-break",
+        "recompile"
+      ],
+      "symptoms": [
+        "torch._dynamo.exc.BackendCompilerFailed: backend='inductor' raised",
+        "SubgraphLoweringException / LoweringException / OperatorIssue",
+        "torch.compile 后首次运行报错，eager 正常",
+        "日志里大量 graph break，或 recompile 次数异常",
+        "升级 PyTorch 后原本能编译的模型失败"
+      ],
+      "stacks": [
+        "torch.compile"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/torch-compile-backend-error.md"
+    },
+    {
+      "name": "triton-kernel-compile-error",
+      "title": "Triton kernel 编译错误：从前端、MLIR 到 ptxas 的分层定位",
+      "description": "Triton kernel 报 CompilationError、MLIR verifier 错误、OutOfResources 或 PTXASError 时，先判断错误发生在前端/TTIR-TTGIR 优化/LLVM/PTX/ptxas 哪一层，再用 kernel dump、reproducer、override 和 interpreter 定位到具体约束。",
+      "category": "compile",
+      "tags": [
+        "triton",
+        "mlir",
+        "ptxas",
+        "compilation-error",
+        "gpu"
+      ],
+      "symptoms": [
+        "triton.compiler.errors.CompilationError，附带源码位置和 caret",
+        "MLIR 报 'tt.load'/'tt.dot' 等 op 的 verifier 错误",
+        "out of resource: shared memory, Required: N, Hardware limit: M",
+        "PTXASError，ptxas stderr 里是寄存器/共享内存/架构问题",
+        "同样的 kernel 在别的 GPU 或 triton 版本能编译"
+      ],
+      "stacks": [
+        "triton"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/triton-kernel-compile-error.md"
+    },
+    {
+      "name": "tvm-build-error",
+      "title": "TVM 构建与调度错误：Check failed、IR 定位和版本 API 差异",
+      "description": "TVM 报 Check failed、InternalError、ScheduleError 或 tvm.build 失败时，先用当前版本的 API 打印 lowered TIR/CUDA 源码，再用 opt_level=0 和 disabled_pass 二分定位；同时注意 tvm.lower、debug_executor 等旧教程 API 已被移除。",
+      "category": "compile",
+      "tags": [
+        "tvm",
+        "tir",
+        "schedule",
+        "build",
+        "compilation-error"
+      ],
+      "symptoms": [
+        "TVMError / InternalError / Check failed，附带文件行号和 TIR 片段",
+        "ScheduleError 提示某个 axis 无法 fuse/compute_at/vectorize",
+        "tvm.build 在 CUDA target 上失败，但 LLVM target 正常",
+        "按旧教程调用 tvm.lower / tvm.contrib.debugger 报 AttributeError",
+        "升级 TVM 后同一份 schedule 代码不能编译"
+      ],
+      "stacks": [
+        "tvm"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/tvm-build-error.md"
+    },
+    {
+      "name": "xla-compile-error",
+      "title": "XLA/JAX 编译错误：HLO dump、形状错误与显存预分配",
+      "description": "JAX/XLA 报 XlaRuntimeError、INVALID_ARGUMENT、RESOURCE_EXHAUSTED、INTERNAL 或编译缓慢时，用 as_text 和 XLA_FLAGS dump 出 HLO，区分 trace/形状、编译优化、显存预分配和数值问题。",
+      "category": "compile",
+      "tags": [
+        "xla",
+        "jax",
+        "hlo",
+        "compilation-error",
+        "dump"
+      ],
+      "symptoms": [
+        "jax.errors.JaxRuntimeError / XlaRuntimeError",
+        "INVALID_ARGUMENT，错误里带大段 HLO",
+        "RESOURCE_EXHAUSTED，但单步显存看起来没超",
+        "编译时间很长或卡住，首次调用特别慢",
+        "同一函数因 shape 变化反复重新编译",
+        "GPU 上出现 NaN，eager 参考却正常"
+      ],
+      "stacks": [
+        "xla",
+        "jax"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/xla-compile-error.md"
+    },
+    {
+      "name": "illegal-memory-access",
+      "title": "非法访存与异步 CUDA 错误定位",
+      "description": "出现 illegal memory access、misaligned address、device-side assert、unspecified launch failure，或错误在无关调用处才抛出时，用 CUDA_LAUNCH_BLOCKING、compute-sanitizer 和 cuda-gdb 把异步错误定位到具体 kernel 与越界点。",
+      "category": "crash",
+      "tags": [
+        "cuda",
+        "illegal-memory-access",
+        "sanitizer",
+        "cuda-gdb",
+        "torch.compile"
+      ],
+      "symptoms": [
+        "CUDA error: an illegal memory access was encountered",
+        "misaligned address / unspecified launch failure / bus error",
+        "device-side assert triggered，但不知道是哪个 kernel",
+        "报错位置在无关的 tensor 操作或下一次迭代",
+        "进程直接 abort，没有 Python traceback"
+      ],
+      "stacks": [
+        "cuda",
+        "torch.compile",
+        "triton",
+        "tvm",
+        "xla"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/illegal-memory-access.md"
+    },
+    {
+      "name": "precision-and-fastmath",
+      "title": "精度与 fast-math：区分数值差异和真实 bug",
+      "description": "编译后结果与参考不一致、出现 NaN/inf、fp16/bf16/TF32 误差超预期时，先确认误差来源是数据类型、累加精度、TF32、fast-math 还是算法 bug，再决定修精度还是报编译器问题。",
+      "category": "correctness",
+      "tags": [
+        "precision",
+        "tf32",
+        "fp16",
+        "bf16",
+        "fast-math",
+        "numerical"
+      ],
+      "symptoms": [
+        "float32 结果与参考差 1e-3 量级，疑似 TF32",
+        "fp16/bf16 训练出现 NaN、inf 或 loss 爆炸",
+        "关闭 torch.compile 后误差消失，但找不到具体算子",
+        "加长归约或增大 batch 后误差明显变大",
+        "同一模型换 GPU 架构后精度不同"
+      ],
+      "stacks": [
+        "torch.compile",
+        "triton",
+        "cuda",
+        "xla"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/precision-and-fastmath.md"
+    },
+    {
+      "name": "race-and-sync",
+      "title": "数据竞争与同步缺失：偶发错误、结果随运行变化",
+      "description": "结果偶发错误、重复运行不一致、只在多 warp/多 block/多卡出现，或 racecheck 报 hazard 时，按“重复实验—racecheck—单 warp 复现—加同步验证”的顺序定位共享内存、原子操作和 stream 同步问题。",
+      "category": "correctness",
+      "tags": [
+        "race-condition",
+        "synchronization",
+        "triton",
+        "cuda",
+        "sanitizer"
+      ],
+      "symptoms": [
+        "同一输入重复运行，结果偶尔不同或偶尔崩溃",
+        "单 block/单 warp 正确，多 block/多 warp 错误",
+        "只在多卡、多流或高并发下出现",
+        "compute-sanitizer racecheck 报 shared memory hazard",
+        "加一句 torch.cuda.synchronize() 后问题消失"
+      ],
+      "stacks": [
+        "triton",
+        "cuda",
+        "torch.compile",
+        "xla"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/race-and-sync.md"
+    },
+    {
+      "name": "silent-wrong-results",
+      "title": "静默错误结果：不报错但算错了",
+      "description": "编译和运行都没有异常，但输出与 eager/CPU/float64 参考不一致，或偶发错误、精度下降、NaN。按“建立参考—逐层对拍—关闭优化—极端输入”的顺序定位，区分真实 bug 与数值差异。",
+      "category": "correctness",
+      "tags": [
+        "correctness",
+        "torch.compile",
+        "triton",
+        "numerical",
+        "debugging"
+      ],
+      "symptoms": [
+        "eager 结果正确，torch.compile/JIT 后结果错误",
+        "CPU 正确、GPU 错误，或小 shape 正确、大 shape 错误",
+        "没有报错，但 loss/梯度异常、输出出现 NaN 或 inf",
+        "同一输入重复运行，结果偶尔不同",
+        "误差不大但下游任务明显退化"
+      ],
+      "stacks": [
+        "torch.compile",
+        "triton",
+        "tvm",
+        "xla",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/silent-wrong-results.md"
+    },
+    {
+      "name": "cudagraph-capture-problems",
+      "title": "CUDA Graphs 捕获失败、回退与捕获后正确性问题",
+      "description": "使用 torch.compile 的 reduce-overhead、torch.cuda.graph 或推理图捕获时，出现 operation not permitted when stream is capturing、捕获失败回退、捕获后结果错误或卡住，按“捕获期非法操作—预热—静态输入—多流/集合通信”逐项排查。",
+      "category": "performance",
+      "tags": [
+        "cuda-graphs",
+        "torch.compile",
+        "inductor",
+        "capture",
+        "inference"
+      ],
+      "symptoms": [
+        "CUDA error: operation not permitted when stream is capturing",
+        "torch.compile 日志提示 skipping cudagraphs，性能没有提升",
+        "捕获成功但 replay 结果错误或第一次正确、第二次错误",
+        "捕获阶段卡住、超时或进程 abort",
+        "多卡/NCCL 场景捕获失败"
+      ],
+      "stacks": [
+        "torch.compile",
+        "cuda",
+        "triton"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/cudagraph-capture-problems.md"
+    },
+    {
+      "name": "register-spill-occupancy",
+      "title": "寄存器溢出与占用率：tile 调大反而更慢",
+      "description": "kernel 编译通过但变慢，ptxas 报告 spill stores/loads，或 occupancy 低、寄存器限制占用率时，用 cuobjdump -res-usage、ptxas -v、nsight compute 指标确认是否溢出，再通过缩小 tile、减少活跃变量和拆分 kernel 修复。",
+      "category": "performance",
+      "tags": [
+        "registers",
+        "spill",
+        "occupancy",
+        "ptxas",
+        "sass",
+        "nsight-compute"
+      ],
+      "symptoms": [
+        "ptxas 输出非零 spill stores / spill loads",
+        "调大 tile/BLOCK 后性能反而下降",
+        "nsight compute 显示 occupancy 受寄存器限制",
+        "SASS 中出现大量 LDL/STL（local memory）",
+        "kernel 理论算力够，但吞吐上不去"
+      ],
+      "stacks": [
+        "cuda",
+        "triton",
+        "torch.compile"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/register-spill-occupancy.md"
+    },
+    {
+      "name": "slow-kernel-triage",
+      "title": "慢 kernel 分层排查：端到端、访存、计算还是调度",
+      "description": "编译通过、结果正确但性能明显回退或波动时，先用 nsys 区分端到端瓶颈（同步、拷贝、启动、空洞），再用 ncu 指标判断 kernel 是访存、计算、延迟还是占用率受限，最后才调 tile 和 launch 配置。",
+      "category": "performance",
+      "tags": [
+        "performance",
+        "nsight-systems",
+        "nsight-compute",
+        "profiling",
+        "memory-bound"
+      ],
+      "symptoms": [
+        "能跑但比 baseline 慢很多，或性能波动大",
+        "融合/cudagraph 开启后没有预期提升",
+        "GPU 利用率低、CPU 与 GPU 之间有空档",
+        "kernel 数量很多、每个都很短",
+        "不确定该优化访存、计算还是 launch 开销"
+      ],
+      "stacks": [
+        "torch.compile",
+        "triton",
+        "cuda",
+        "xla"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/slow-kernel-triage.md"
+    },
+    {
+      "name": "compile-cache-and-recompiles",
+      "title": "编译缓存与重编译：每次启动都变慢、cache 目录暴涨",
+      "description": "torch.compile/JAX/Triton 首次编译慢、每次启动都重编译、recompile 计数暴涨、cache 目录膨胀或编译 OOM 时，用 recompiles 日志、TORCH_TRACE/tlparse、动态 shape 标注和缓存目录排查。",
+      "category": "engineering",
+      "tags": [
+        "torch.compile",
+        "cache",
+        "recompile",
+        "dynamic-shapes",
+        "compile-time"
+      ],
+      "symptoms": [
+        "每次启动都要重新编译，第二次也不快",
+        "TORCH_LOGS=recompiles 显示同一函数反复重编译",
+        "torch._dynamo hit config.cache_size_limit / recompile_limit",
+        "编译缓存目录持续膨胀或占满磁盘",
+        "多进程训练时每个 rank 各编译一份，启动很慢"
+      ],
+      "stacks": [
+        "torch.compile",
+        "triton",
+        "jax"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/compile-cache-and-recompiles.md"
+    },
+    {
+      "name": "distributed-graph-compile",
+      "title": "分布式图编译：多卡 hang、NCCL 超时与 rank 间图不一致",
+      "description": "单卡正常、多卡 hang/超时/结果不一致，或 torch.compile 与分布式集合通信、CUDA Graphs 组合出问题时，按“控制流一致—collective 顺序—shape 对齐—超时与 flight recorder—通信与图捕获”逐项排查。",
+      "category": "engineering",
+      "tags": [
+        "distributed",
+        "nccl",
+        "torch.compile",
+        "cudagraph",
+        "multi-gpu"
+      ],
+      "symptoms": [
+        "NCCL timeout / watchdog 报错，进程挂起不退出",
+        "单卡正确，多卡结果不一致或 loss 发散",
+        "只有部分 rank 抛异常，其他 rank 卡住",
+        "torch.compile 后多卡 hang，eager 正常",
+        "CUDA Graphs 捕获期集合通信失败"
+      ],
+      "stacks": [
+        "torch.compile",
+        "cuda",
+        "nccl"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/distributed-graph-compile.md"
+    },
+    {
+      "name": "toolchain-arch-mismatch",
+      "title": "工具链与架构不匹配：no kernel image、sm_90a 未定义、驱动过旧",
+      "description": "编译成功但运行时报 no kernel image、invalid device function、CUDA driver version is insufficient，或 ptxas 不识别 sm_90a 时，按“运行时/驱动/ptxas/目标 GPU 架构”四层核对版本与 cubin/PTX，再决定重编译、补 PTX 还是升级驱动。",
+      "category": "engineering",
+      "tags": [
+        "cuda",
+        "arch",
+        "ptxas",
+        "driver",
+        "compatibility",
+        "no-kernel-image"
+      ],
+      "symptoms": [
+        "no kernel image is available for execution on the device",
+        "CUDA driver version is insufficient for CUDA runtime version",
+        "ptxas fatal 提示 sm_90a/sm_100a 等架构值未定义",
+        "编译机正常，目标机运行失败",
+        "换 GPU 型号或容器后同一 wheel 不能跑",
+        "invalid device function / too many resources requested"
+      ],
+      "stacks": [
+        "cuda",
+        "torch.compile",
+        "triton",
+        "tvm",
+        "xla"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-graph-compile/toolchain-arch-mismatch.md"
+    }
+  ]
+}
