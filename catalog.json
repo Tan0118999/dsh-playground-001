@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "count": 16,
+  "count": 31,
   "categories": [
     "methodology",
     "compile",
@@ -41,6 +41,89 @@
       "path": "experiences/gpu-graph-compile/gpu-compile-triage.md"
     },
     {
+      "name": "gpu-profiling-measurement-hygiene",
+      "title": "profiling 测量卫生：预热、时钟、profiler 开销和统计",
+      "description": "两次测量差很多、优化后无法证明收益、profiler 下比原生慢几倍、报告数字被质疑、时钟/温度导致降频时读这条。给出预热、多次/中位数、时钟、profiler 开销、单位和交叉验证的清单与报告模板。",
+      "category": "methodology",
+      "tags": [
+        "measurement",
+        "warmup",
+        "variance",
+        "throttling",
+        "profiling-overhead",
+        "statistics"
+      ],
+      "symptoms": [
+        "结果跳动大，不知道信哪个",
+        "profiler 下 kernel 慢很多",
+        "优化后看不出端到端收益",
+        "时钟/温度导致降频",
+        "两次运行差 20% 但代码没变"
+      ],
+      "stacks": [
+        "cuda",
+        "nsys",
+        "ncu",
+        "pytorch"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-profiling-measurement-hygiene.md"
+    },
+    {
+      "name": "gpu-profiling-triage",
+      "title": "GPU 性能问题分层定位总纲：先决定优化谁",
+      "description": "模型或算子变慢、GPU 利用率低、kernel 优化后端到端没变、优化清单很长不知道优先级时读这条。用端到端→单 kernel→源码三层和 Amdahl 决定先看谁，适用于 Nsight Systems、Nsight Compute 和 PyTorch Profiler。",
+      "category": "methodology",
+      "tags": [
+        "triage",
+        "methodology",
+        "amdahl",
+        "nsys",
+        "ncu",
+        "workload"
+      ],
+      "symptoms": [
+        "能跑但慢，不知道先看哪一层",
+        "GPU 利用率高但吞吐低",
+        "kernel 快了一倍，端到端几乎没变",
+        "优化清单很长，不知道先做哪一个"
+      ],
+      "stacks": [
+        "cuda",
+        "nsys",
+        "ncu",
+        "pytorch"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-profiling-triage.md"
+    },
+    {
+      "name": "gpu-roofline-and-occupancy",
+      "title": "roofline 与 occupancy：判断 kernel 还有多少优化空间",
+      "description": "不确定 kernel 是否已到 roof、该减少字节还是换 Tensor Core、occupancy 低要不要调、MFU 低但不知道瓶颈时读这条。给出算术强度、机器平衡点、roofline 读法、occupancy 限制项和 Little's law 直觉。",
+      "category": "methodology",
+      "tags": [
+        "roofline",
+        "arithmetic-intensity",
+        "occupancy",
+        "mfu",
+        "performance-model"
+      ],
+      "symptoms": [
+        "kernel 离峰值多远，还有多少空间",
+        "memory-bound 还是 compute-bound 分不清",
+        "occupancy 50% 要不要调",
+        "MFU 低但不知道优化什么",
+        "加了很多 block，带宽还是上不去"
+      ],
+      "stacks": [
+        "cuda",
+        "ncu"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-roofline-and-occupancy.md"
+    },
+    {
       "name": "minimal-repro",
       "title": "最小复现与配置二分：把 GPU 图编译问题缩到可提交",
       "description": "需要定位或向上游报告 GPU 图编译问题时，用“固定输入—剥离模型—配置二分—版本二分”得到单文件可运行的最小复现，并收集日志、IR、环境矩阵和期望/实际结果。",
@@ -69,6 +152,35 @@
       ],
       "updated": "2026-11-02",
       "path": "experiences/gpu-graph-compile/minimal-repro.md"
+    },
+    {
+      "name": "npu-to-gpu-profiling-mapping",
+      "title": "从 NPU 到 GPU：profiling 概念对照与迁移陷阱",
+      "description": "有昇腾/CANN 优化经验、第一次看 GPU profile，不知道 SM/warp/occupancy 与 AI Core/UB/流水线如何对应时读这条。给出概念对照、不能直接类比的点和推荐阅读顺序，帮助把 NPU 经验安全地迁移到 GPU。",
+      "category": "methodology",
+      "tags": [
+        "npu",
+        "ascend",
+        "cuda",
+        "sm",
+        "warp",
+        "occupancy",
+        "mental-model"
+      ],
+      "symptoms": [
+        "只会看 msprof/MindStudio Insight，不知道 Nsight 从哪看起",
+        "用 NPU 的流水线/tiling 思维调 GPU，越调越慢",
+        "不理解 SM、warp、occupancy、sector 这些词",
+        "想把 AI Core/UB 的经验直接套到 GPU"
+      ],
+      "stacks": [
+        "cuda",
+        "npu",
+        "nsys",
+        "ncu"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/npu-to-gpu-profiling-mapping.md"
     },
     {
       "name": "torch-compile-backend-error",
@@ -315,6 +427,231 @@
       "path": "experiences/gpu-graph-compile/cudagraph-capture-problems.md"
     },
     {
+      "name": "gpu-multi-stream-overlap",
+      "title": "async 不等于 overlap：用时间线验证 stream 与 copy engine",
+      "description": "用了 cudaMemcpyAsync 或多 stream 但总时间仍等于计算加拷贝、怀疑没有重叠、D2H 在等 kernel、pinned memory 没生效时读这条。给出同 stream/依赖/pinned/隐式同步的排查和真实 trace。",
+      "category": "performance",
+      "tags": [
+        "cuda",
+        "stream",
+        "overlap",
+        "memcpy",
+        "copy-engine",
+        "pinned-memory",
+        "nsys"
+      ],
+      "symptoms": [
+        "多流没有变快",
+        "拷贝没有和计算重叠",
+        "cudaMemcpyAsync 仍然串行",
+        "D2H 在等 kernel",
+        "用了 pinned memory 但没改善"
+      ],
+      "stacks": [
+        "cuda",
+        "nsys"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-multi-stream-overlap.md"
+    },
+    {
+      "name": "gpu-naive-sgemm-bottleneck",
+      "title": "naive SGEMM 只有峰值 6%：compute-bound 也该先看访存和复用",
+      "description": "手写 GEMM 吞吐远低于峰值、离 compute roof 很远、不知道该 tiling 还是换 Tensor Core、加 shared memory 后提升有限时读这条。用真实 SGEMM 数据分析指令/复用/occupancy，并给出验证顺序。",
+      "category": "performance",
+      "tags": [
+        "gemm",
+        "matmul",
+        "sgemm",
+        "tiling",
+        "tensor-core",
+        "cublas",
+        "compute-bound"
+      ],
+      "symptoms": [
+        "GEMM 只有几 TFLOP/s",
+        "compute-bound 但 FMA 没打满",
+        "加了 shared memory 提升有限",
+        "Tensor Core 改完结果不对",
+        "不知道先 tiling 还是先换 dtype"
+      ],
+      "stacks": [
+        "cuda",
+        "ncu",
+        "cublas"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-naive-sgemm-bottleneck.md"
+    },
+    {
+      "name": "gpu-profiling-cli-cheatsheet",
+      "title": "GPU profiling 命令与指标速查：nsys、ncu、torch、nvidia-smi",
+      "description": "需要一条可复制的 nsys/ncu/torch profiler/nvidia-smi 命令、常见指标名、阈值或“症状对应先看什么”时读这条。包含采集、统计、报告导出、指标表和快速判读阈值。",
+      "category": "performance",
+      "tags": [
+        "nsys",
+        "ncu",
+        "pytorch",
+        "nvidia-smi",
+        "metrics",
+        "cheatsheet",
+        "commands"
+      ],
+      "symptoms": [
+        "忘了 nsys stats 的报告名",
+        "ncu 指标名是什么",
+        "怎么只采一个 kernel",
+        "压测要看哪些 nvidia-smi 字段",
+        "只有 10 分钟，想按清单走"
+      ],
+      "stacks": [
+        "nsys",
+        "ncu",
+        "pytorch",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-profiling-cli-cheatsheet.md"
+    },
+    {
+      "name": "gpu-warp-stall-and-memory-analysis",
+      "title": "warp stall 与访存效率：long scoreboard、sectors/request、bank conflict",
+      "description": "Nsight Compute 里 long scoreboard/barrier/math throttle 很高、带宽上不去、global load sectors/request 远高于 4、怀疑非合并访存或 shared bank conflict、transpose 或 attention 访存效率差时读这条。",
+      "category": "performance",
+      "tags": [
+        "ncu",
+        "warp-stall",
+        "coalescing",
+        "sectors",
+        "shared-memory",
+        "bank-conflict",
+        "transpose"
+      ],
+      "symptoms": [
+        "long scoreboard 占比高",
+        "global load sectors/request 是 16",
+        "shared bank conflict 高",
+        "带宽只有峰值的 30%",
+        "transpose/attention 的 HBM 流量远大于有效数据"
+      ],
+      "stacks": [
+        "ncu",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-warp-stall-and-memory-analysis.md"
+    },
+    {
+      "name": "nsight-compute-first-pass",
+      "title": "Nsight Compute 第一轮：SOL、Occupancy、Warp State 的阅读顺序",
+      "description": "拿到 ncu 报告被几十个 section 淹没、不知道先看哪、SOL 百分比怎么解读、ncu 报 ERR_NVGPUCTRPERM、replay 结果和真实运行不一致时读这条。给出权限/replay、SOL 四象限、section 顺序和判读示例。",
+      "category": "performance",
+      "tags": [
+        "ncu",
+        "nsight-compute",
+        "sol",
+        "occupancy",
+        "warp-state",
+        "replay"
+      ],
+      "symptoms": [
+        "ncu --set full 输出太多看不懂",
+        "Memory 90% 但不知道是不是瓶颈",
+        "occupancy 低，不知道限制项",
+        "ERR_NVGPUCTRPERM",
+        "replay 后的时间和真实运行差很多"
+      ],
+      "stacks": [
+        "ncu",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/nsight-compute-first-pass.md"
+    },
+    {
+      "name": "nsight-systems-gpu-idle-and-launch-overhead",
+      "title": "GPU 空转与 launch-bound：时间线 gap 怎么归因",
+      "description": "GPU 利用率锯齿、时间线大片空白、成百上千个微秒级 kernel、cudaLaunchKernel 次数很多、GPU 行空但 CPU 很忙时读这条。区分 CPU launch、同步、dataloader、host 初始化，并给出 CUDA Graphs/融合的验证方法。",
+      "category": "performance",
+      "tags": [
+        "nsys",
+        "gap",
+        "launch-overhead",
+        "cuda-graphs",
+        "dataloader",
+        "idle"
+      ],
+      "symptoms": [
+        "GPU 时间线周期性空白",
+        "大量 kernel 只有几微秒",
+        "cudaLaunchKernel 次数很多",
+        "GPU 行空但 CPU 很忙",
+        "用了 CUDA Graphs 但不知道有没有用"
+      ],
+      "stacks": [
+        "nsys",
+        "cuda",
+        "pytorch"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/nsight-systems-gpu-idle-and-launch-overhead.md"
+    },
+    {
+      "name": "nsight-systems-timeline-reading",
+      "title": "第一次读 Nsight Systems 时间线：UI、行语义和 10 分钟例程",
+      "description": "打开 nsys 报告后不知道看哪里、时间线是一屏彩色条、GPU 行有大片空白、分不清大 kernel 和小 kernel、Time% 和 wall time 对不上时读这条。含 UI 地图、行语义、缩放和 Events View、CLI 统计以及真实 trace 走读。",
+      "category": "performance",
+      "tags": [
+        "nsys",
+        "nsight-systems",
+        "timeline",
+        "nvtx",
+        "launch",
+        "profiling"
+      ],
+      "symptoms": [
+        "Nsight Systems 界面太复杂，不知道点哪",
+        "CUDA HW 行有空档，不知道为什么",
+        "Time% 和 wall time 对不上",
+        "分不清是一个大 kernel 还是很多小 kernel",
+        "不知道 nsys stats 该看哪些列"
+      ],
+      "stacks": [
+        "nsys",
+        "cuda",
+        "nvtx"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/nsight-systems-timeline-reading.md"
+    },
+    {
+      "name": "pytorch-profiler-and-memory-snapshot",
+      "title": "PyTorch Profiler 与显存快照：先找 top 算子，再看 OOM",
+      "description": "用 PyTorch 训练/推理，想快速找 top 算子、shape、调用栈、显存峰值，或排查 OOM/碎片、dataloader 瓶颈时读这条。含 schedule、TensorBoard、memory snapshot 和与 nsys 的分工。",
+      "category": "performance",
+      "tags": [
+        "pytorch",
+        "torch-profiler",
+        "tensorboard",
+        "memory",
+        "oom",
+        "dataloader"
+      ],
+      "symptoms": [
+        "不知道哪个 Python 算子慢",
+        "同一个算子不同 shape 时间差很多",
+        "显存 OOM 但不知道谁占的",
+        "dataloader 是否是瓶颈",
+        "不想先学 Nsight"
+      ],
+      "stacks": [
+        "pytorch",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/pytorch-profiler-and-memory-snapshot.md"
+    },
+    {
       "name": "register-spill-occupancy",
       "title": "寄存器溢出与占用率：tile 调大反而更慢",
       "description": "kernel 编译通过但变慢，ptxas 报告 spill stores/loads，或 occupancy 低、寄存器限制占用率时，用 cuobjdump -res-usage、ptxas -v、nsight compute 指标确认是否溢出，再通过缩小 tile、减少活跃变量和拆分 kernel 修复。",
@@ -423,6 +760,94 @@
       ],
       "updated": "2026-11-02",
       "path": "experiences/gpu-graph-compile/distributed-graph-compile.md"
+    },
+    {
+      "name": "gpu-monitoring-and-throttling",
+      "title": "先排除环境问题：nvidia-smi、DCGM、降频和拓扑",
+      "description": "性能波动大、怀疑降频/功耗/温度、nvidia-smi util 100% 但吞吐低、多卡走 PCIe 而不是 NVLink、需要集群监控时读这条。给出查询命令、指标判读、DCGM 和常见误读。",
+      "category": "engineering",
+      "tags": [
+        "nvidia-smi",
+        "dcgm",
+        "throttling",
+        "topology",
+        "monitoring",
+        "clocks"
+      ],
+      "symptoms": [
+        "时钟低于 boost",
+        "温度/功耗高，性能忽快忽慢",
+        "util 100% 但吞吐低",
+        "多卡走 PCIe 而不是 NVLink",
+        "需要长期监控 GPU 健康"
+      ],
+      "stacks": [
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-monitoring-and-throttling.md"
+    },
+    {
+      "name": "gpu-other-platform-tools",
+      "title": "不止 Nsight：AMD、Intel、Apple、TPU 和图形工具怎么选",
+      "description": "手头不是 NVIDIA GPU、要分析图形管线、或不确定该用 torch profiler / Nsight / 厂商工具时读这条。给出按问题选工具的表、AMD rocprofv3、Intel unitrace、Apple Metal System Trace、TPU/NPU 工具和边界。",
+      "category": "engineering",
+      "tags": [
+        "amd",
+        "rocm",
+        "intel",
+        "apple",
+        "metal",
+        "tpu",
+        "nsight-graphics",
+        "tooling"
+      ],
+      "symptoms": [
+        "手头是 AMD/Intel/Apple GPU",
+        "不知道什么时候用 torch profiler",
+        "图形管线问题",
+        "TPU/NPU 上怎么 profile",
+        "工具太多不知道选哪个"
+      ],
+      "stacks": [
+        "pytorch",
+        "rocm",
+        "sycl",
+        "metal",
+        "tpu"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-other-platform-tools.md"
+    },
+    {
+      "name": "gpu-profiling-permissions-and-containers",
+      "title": "采不到数据：ncu 计数器权限、容器、WSL 和 MIG",
+      "description": "ncu 报 ERR_NVGPUCTRPERM、容器里 nsys 失败/没有数据、WSL 下 ncu 不可用、MIG 实例指标缺失、远程/云上采不到计数器时读这条。给出权限模型、容器/Slurm 配置和替代测量方案。",
+      "category": "engineering",
+      "tags": [
+        "ncu",
+        "nsys",
+        "permissions",
+        "container",
+        "docker",
+        "wsl",
+        "mig",
+        "slurm"
+      ],
+      "symptoms": [
+        "ERR_NVGPUCTRPERM",
+        "容器里 nsys 没有数据",
+        "WSL 下 ncu 失败",
+        "MIG 上部分指标不可用",
+        "远程机器采完报告打不开"
+      ],
+      "stacks": [
+        "ncu",
+        "nsys",
+        "cuda"
+      ],
+      "updated": "2026-11-02",
+      "path": "experiences/gpu-profiling/gpu-profiling-permissions-and-containers.md"
     },
     {
       "name": "toolchain-arch-mismatch",

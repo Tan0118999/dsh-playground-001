@@ -1,0 +1,11 @@
+
+ ** CUDA GPU Kernel Summary (cuda_gpu_kern_sum):
+
+ Time (%)  Total Time (ns)  Instances  Avg (ns)   Med (ns)   Min (ns)  Max (ns)  StdDev (ns)                                  Name                                
+ --------  ---------------  ---------  ---------  ---------  --------  --------  -----------  --------------------------------------------------------------------
+     95.1         35062896         31  1131061.2  1028853.0   1015413   1567375     147437.1  matmul_naive(const float *, const float *, float *, int)            
+      2.0           737913         21    35138.7    35135.0     34944     35488        146.7  transpose_naive(const float *, float *, int)                        
+      1.7           635737          2   317868.5   317868.5    313660    322077       5951.7  vector_add4(const float4 *, const float4 *, float4 *, unsigned long)
+      0.7           243293        501      485.6      480.0       479       832         22.4  tiny_kernel(float *)                                                
+      0.6           203422         21     9686.8     9696.0      9600      9728         33.8  transpose_tiled(const float *, float *, int)                        
+

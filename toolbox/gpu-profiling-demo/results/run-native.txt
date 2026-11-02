@@ -1,0 +1,45 @@
+--- run 1 ---
+GPU: NVIDIA GeForce RTX 5070 (sm_120, 48 SMs)
+vector_add      :    0.327 ms    615.2 GB/s (read+write 3x64MB)
+matmul_naive    :   21.889 ms   1962.2 GFLOP/s (42.95 GFLOP)
+transpose_naive :    0.037 ms    224.5 GB/s
+transpose_tiled :    0.022 ms    386.9 GB/s
+500 tiny kernels:    6.117 ms  (12.2 us each, launch included)
+overlap phase   :   11.199 ms
+done
+--- run 2 ---
+GPU: NVIDIA GeForce RTX 5070 (sm_120, 48 SMs)
+vector_add      :    0.394 ms    511.3 GB/s (read+write 3x64MB)
+matmul_naive    :   20.918 ms   2053.2 GFLOP/s (42.95 GFLOP)
+transpose_naive :    0.037 ms    227.0 GB/s
+transpose_tiled :    0.019 ms    447.3 GB/s
+500 tiny kernels:    5.604 ms  (11.2 us each, launch included)
+overlap phase   :   10.339 ms
+done
+--- run 3 ---
+GPU: NVIDIA GeForce RTX 5070 (sm_120, 48 SMs)
+vector_add      :    0.324 ms    621.9 GB/s (read+write 3x64MB)
+matmul_naive    :   22.614 ms   1899.2 GFLOP/s (42.95 GFLOP)
+transpose_naive :    0.037 ms    226.4 GB/s
+transpose_tiled :    0.014 ms    620.7 GB/s
+500 tiny kernels:    3.147 ms  (6.3 us each, launch included)
+overlap phase   :   11.509 ms
+done
+--- run 4 ---
+GPU: NVIDIA GeForce RTX 5070 (sm_120, 48 SMs)
+vector_add      :    0.325 ms    620.4 GB/s (read+write 3x64MB)
+matmul_naive    :   20.743 ms   2070.6 GFLOP/s (42.95 GFLOP)
+transpose_naive :    0.038 ms    220.7 GB/s
+transpose_tiled :    0.013 ms    622.1 GB/s
+500 tiny kernels:    5.258 ms  (10.5 us each, launch included)
+overlap phase   :   10.254 ms
+done
+--- run 5 ---
+GPU: NVIDIA GeForce RTX 5070 (sm_120, 48 SMs)
+vector_add      :    0.336 ms    599.9 GB/s (read+write 3x64MB)
+matmul_naive    :   22.254 ms   1930.0 GFLOP/s (42.95 GFLOP)
+transpose_naive :    0.037 ms    227.6 GB/s
+transpose_tiled :    0.022 ms    388.5 GB/s
+500 tiny kernels:    5.459 ms  (10.9 us each, launch included)
+overlap phase   :   10.302 ms
+done

@@ -1,0 +1,11 @@
+
+ ** NVTX Range Summary (nvtx_sum):
+
+ Time (%)  Total Time (ns)  Instances   Avg (ns)    Med (ns)   Min (ns)  Max (ns)  StdDev (ns)   Style           Range         
+ --------  ---------------  ---------  ----------  ----------  --------  --------  -----------  -------  ----------------------
+     51.3         22223113          1  22223113.0  22223113.0  22223113  22223113          0.0  PushPop  :phase 2: matmul_naive
+     28.3         12236560          1  12236560.0  12236560.0  12236560  12236560          0.0  PushPop  :phase 5: overlap     
+     16.4          7097527          1   7097527.0   7097527.0   7097527   7097527          0.0  PushPop  :phase 4: tiny_kernels
+      3.0          1312690          1   1312690.0   1312690.0   1312690   1312690          0.0  PushPop  :phase 3: transpose   
+      1.0           422088          1    422088.0    422088.0    422088    422088          0.0  PushPop  :phase 1: vector_add  
+

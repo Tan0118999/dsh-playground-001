@@ -1,0 +1,6 @@
+build/
+results/*.nsys-rep
+results/*.sqlite
+results/*.ncu-rep
+results/*.log
+results/figures/
