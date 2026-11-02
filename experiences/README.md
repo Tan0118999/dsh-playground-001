@@ -1,9 +1,10 @@
 # 经验条目
 
-共 **31 条**经验，分为两个主题：
+共 **32 条**经验，分为三个主题：
 
 - [`gpu-graph-compile/`](gpu-graph-compile/)：GPU 图编译 debug，16 条；
-- [`gpu-profiling/`](gpu-profiling/)：GPU Profiling 与性能分析，15 条。
+- [`gpu-profiling/`](gpu-profiling/)：GPU Profiling 与性能分析，15 条；
+- [`dsh-creator-mode/`](dsh-creator-mode/)：DSH 创造模式与插件提示词，1 条。
 
 按现象查表，不要只按标题猜。
 
@@ -50,6 +51,14 @@
 | 想查命令/指标/阈值 | [命令与指标速查](gpu-profiling/gpu-profiling-cli-cheatsheet.md) |
 | 手头是 AMD/Intel/Apple/TPU | [跨平台工具](gpu-profiling/gpu-other-platform-tools.md) |
 
+## DSH 创造模式症状速查
+
+| 你看到的现象 | 先读 |
+| --- | --- |
+| 想复现 DSH 创造模式视频里的“模型可视化/模型架构示意图”插件，找不到提示词原文 | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
+| 提示词粘进 dsh 后，一次生成的效果和视频不一样 | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
+| 找不到创造模式入口，或不确定生成物装在哪里 | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
+
 ## 图编译按类别
 
 | 类别 | 条目 |
@@ -70,6 +79,12 @@
 | Nsight Compute/kernel（3） | [ncu 第一轮](gpu-profiling/nsight-compute-first-pass.md) · [stall/访存](gpu-profiling/gpu-warp-stall-and-memory-analysis.md) · [naive SGEMM](gpu-profiling/gpu-naive-sgemm-bottleneck.md) |
 | 工具/环境（4） | [PyTorch Profiler](gpu-profiling/pytorch-profiler-and-memory-snapshot.md) · [监控](gpu-profiling/gpu-monitoring-and-throttling.md) · [权限/容器](gpu-profiling/gpu-profiling-permissions-and-containers.md) · [跨平台](gpu-profiling/gpu-other-platform-tools.md) |
 | 速查（1） | [命令与指标](gpu-profiling/gpu-profiling-cli-cheatsheet.md) |
+
+## DSH 创造模式按类别
+
+| 类别 | 条目 |
+| --- | --- |
+| 方法（1） | [模型架构可视化提示词与用法](dsh-creator-mode/dsh-creator-model-architecture-prompt.md) |
 
 ## 怎么读一条经验
 
