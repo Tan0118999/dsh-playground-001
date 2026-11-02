@@ -1,0 +1,8 @@
+GPU: NVIDIA GeForce RTX 5070 (sm_120, 48 SMs)
+vector_add      :    0.324 ms    621.7 GB/s (read+write 3x64MB)
+matmul_naive    :   21.945 ms   1957.1 GFLOP/s (42.95 GFLOP)
+transpose_naive :    0.037 ms    227.4 GB/s
+transpose_tiled :    0.016 ms    528.3 GB/s
+500 tiny kernels:    7.073 ms  (14.1 us each, launch included)
+overlap phase   :   12.038 ms
+done
