@@ -2,13 +2,14 @@
 
 面向工程师和 AI agent 的可复用调试经验库。每条经验按“症状驱动”组织：**什么现象 → 怎么快速判断 → 根因机制 → 怎么排查 → 怎么修 → 怎么验证**，可以直接当作检查清单使用。条目 frontmatter 提供 `name`/`description`/`symptoms`/`tags`，便于像 skill 一样检索和按需加载。
 
-当前收录 **32 条**经验，分为三个主题：
+当前收录 **39 条**经验，分为四个主题：
 
 - **GPU 图编译 debug（16 条）**：`torch.compile`/TorchInductor、Triton、TVM、XLA/JAX，以及 compute-sanitizer、cuda-gdb、Nsight、SASS/PTX 等底层工具；
 - **GPU Profiling 与性能分析（15 条）**：Nsight Systems/Compute、PyTorch Profiler、roofline/occupancy、访存与 stall、测量方法、权限/容器和跨平台工具。
-- **DSH 创造模式与插件提示词（1 条）**：官方提示词原文、任意模型架构示意图的 JSON 清单契约、通用提示词模板与验收。
+- **DSH 创造模式与插件提示词（1 条）**：官方提示词原文、任意模型架构示意图的 JSON 清单契约、通用提示词模板与验收；
+- **NVTX 标注（7 条）**：从第一次打 range 到 range 语义、nsys 采集、Python/PyTorch 集成、排错、attributes/payload 和 ncu/SQLite 自动化。
 
-另有一个可复现的 [`toolbox/gpu-profiling-demo`](toolbox/gpu-profiling-demo/README.md)，用真实 CUDA workload 覆盖 memory-bound、compute-bound、coalescing、launch-bound 和多流 overlap；以及一个可安装的 DSH 插件 [`toolbox/dsh-html-experience`](toolbox/dsh-html-experience/README.md)，把指定经验条目渲染成带风格预设的独立 HTML 阅读页。
+另有一个可复现的 [`toolbox/gpu-profiling-demo`](toolbox/gpu-profiling-demo/README.md)，用真实 CUDA workload 覆盖 memory-bound、compute-bound、coalescing、launch-bound 和多流 overlap；它的阶段条本身就是 NVTX 的实战示例。还有一个可安装的 DSH 插件 [`toolbox/dsh-html-experience`](toolbox/dsh-html-experience/README.md)，把指定经验条目渲染成带风格预设的独立 HTML 阅读页。
 
 ## 目录结构
 
@@ -24,7 +25,8 @@
 │   ├── README.md             # 全部条目索引
 │   ├── gpu-graph-compile/    # GPU 图编译 debug 经验
 │   ├── gpu-profiling/        # GPU Profiling 与性能分析经验
-│   └── dsh-creator-mode/     # DSH 创造模式与插件提示词
+│   ├── dsh-creator-mode/     # DSH 创造模式与插件提示词
+│   └── nvtx/                 # NVTX 标注与 Nsight Systems 时间线
 └── toolbox/                  # 可复用脚本与 demo
     ├── build_catalog.py
     ├── dsh-html-experience/  # DSH 插件：经验条目 -> HTML 阅读页
@@ -92,11 +94,24 @@
 | --- | --- | --- | --- |
 | 方法 | [用 DSH 插件画出任意模型的架构示意图：全流程、上下游、token 构成与消费端](experiences/dsh-creator-mode/dsh-model-architecture-visualization.md) | 把本地模型项目整理成清单，用通用提示词生成可视化插件 | 官方提示词只覆盖 Transformer；图缺上下游、token 构成和消费端 |
 
+## NVTX 标注与 Nsight Systems（7 条）
+
+| 类别 | 条目 | 解决什么 | 典型症状 |
+| --- | --- | --- | --- |
+| 入门 | [第一次用 NVTX](experiences/nvtx/nvtx-first-range.md) | 5 分钟打出一个能在 nsys 里看到的 range | 完全没接触过 NVTX；时间线只有 kernel 名 |
+| 语义 | [range 的语义](experiences/nvtx/nvtx-range-model.md) | 分清 mark、push/pop、start/end、domain、category | range 嵌套错乱；跨线程不知道怎么标 |
+| 工具 | [nsys 采集与查看](experiences/nvtx/nvtx-nsys-workflow.md) | `--trace=nvtx`、capture-range、report、SQLite | 报告没有 NVTX；只想采一段；想脚本分析 |
+| 集成 | [Python 与 PyTorch](experiences/nvtx/nvtx-python-pytorch.md) | `nvtx.annotate`、`torch.cuda.nvtx`、`emit_nvtx` | 分不清 `record_function` 和 NVTX；DataLoader 多进程 |
+| 排错 | [看不到 NVTX 的排查](experiences/nvtx/nvtx-not-showing.md) | 从 trace、注入、range 生命周期到 domain/进程逐层查 | `nvtx_sum` 为空；capture-range 不触发 |
+| 进阶 | [attributes、payload 与 RAII](experiences/nvtx/nvtx-advanced-api.md) | 给 range 加数据、隔离 domain、控制开销 | 想加 step/shape；动态字符串有开销；漏 pop |
+| 进阶 | [消费端与自动化](experiences/nvtx/nvtx-ecosystem-and-automation.md) | ncu 过滤、SQLite/CSV、CUDA Graphs | 只想 profile 某段 kernel；想把结果接入脚本 |
+
 ## 内容状态与边界
 
 - 图编译条目由公开文档和通用调试实践整理，仓库没有 GPU CI，未逐条在本机 GPU 环境实测；
 - Profiling 主题的 nsys 时间线、demo 数字和截图为真实采集；本机 WSL2 未开放 ncu 性能计数器，ncu 条目属于“官方文档 + CLI 元数据 + 通用经验”，未做本机实测。详见 [Profiling 主题说明](experiences/gpu-profiling/README.md)。
 - DSH 主题的官方提示词逐字来自公开页面，入口位置按本机 dsh 0.2.1-rc.3 核对；清单契约和提示词模板是通用设计建议，没有逐条在本机生成插件实测。
+- NVTX 主题的 C/C++ 与 Python 示例、nsys trace/capture-range/domain 过滤/SQLite 在本机实测；PyTorch 相关部分因本机未安装 torch，按官方文档整理；ncu 的 NVTX 过滤只核对了 CLI 元数据和官方文档。详见 [NVTX 主题说明](experiences/nvtx/README.md)。
 - 每条目末尾列出参考来源；使用前请按条目里的“快速判断”确认版本行为。
 - 命令、环境变量默认值和报错文本会随 PyTorch、Triton、TVM、XLA、CUDA 版本变化；无法确定版本的结论会标注“推断/待验证”。
 - 不包含私有代码、客户数据、凭据或内部链接。
