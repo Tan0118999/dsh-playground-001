@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "count": 31,
+  "count": 32,
   "categories": [
     "methodology",
     "compile",
@@ -10,6 +10,33 @@
     "engineering"
   ],
   "entries": [
+    {
+      "name": "dsh-model-architecture-visualization",
+      "title": "用 DSH 插件画出任意模型的架构示意图：全流程、上下游、token 构成与消费端",
+      "description": "想让 DSH 画出自己模型的全流程架构示意图、又不想每次换模型就改提示词时读这条：给出 agent 从工作目录的模型项目文件提取信息的步骤、可替换的 JSON 清单契约、通用创造模式提示词模板和验收清单；换模型只换清单，不在插件里硬编码结构。",
+      "category": "methodology",
+      "tags": [
+        "dsh",
+        "creator-mode",
+        "model-visualization",
+        "architecture-diagram",
+        "token-budget",
+        "plugin",
+        "cordis",
+        "data-contract"
+      ],
+      "symptoms": [
+        "官方提示词只覆盖 Transformer，想画自己项目里的模型架构",
+        "生成的图只有模块名，看不到上下游依赖、token 长度构成和消费端",
+        "不知道 agent 该从工作目录的哪些文件、按什么结构整理这些信息"
+      ],
+      "stacks": [
+        "dsh",
+        "cordis"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/dsh-creator-mode/dsh-model-architecture-visualization.md"
+    },
     {
       "name": "gpu-compile-triage",
       "title": "GPU 图编译问题分层定位总纲",

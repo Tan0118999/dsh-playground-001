@@ -1,0 +1,35 @@
+{
+  "name": "dsh-html-experience",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DSH plugin: turn one experience-library document into a self-contained HTML reading page with style presets",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./render": "./lib/render.js",
+    "./presets": "./lib/presets.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "manifestVersion": 1
+  },
+  "engines": {
+    "node": ">=20",
+    "dsh": ">=0.2.1-rc.3 <0.3.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node bin/html-experience.js --doc ../../experiences/dsh-creator-mode/dsh-model-architecture-visualization.md --style paper --out demo/dsh-model-architecture-visualization.paper.html --force --prompt '读者第一次用 DSH 创造模式做插件：先看清单契约和验收，再决定怎么改提示词。'"
+  },
+  "license": "MIT"
+}
