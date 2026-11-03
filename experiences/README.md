@@ -1,10 +1,11 @@
 # 经验条目
 
-共 **32 条**经验，分为三个主题：
+共 **39 条**经验，分为四个主题：
 
 - [`gpu-graph-compile/`](gpu-graph-compile/)：GPU 图编译 debug，16 条；
 - [`gpu-profiling/`](gpu-profiling/)：GPU Profiling 与性能分析，15 条；
-- [`dsh-creator-mode/`](dsh-creator-mode/)：DSH 创造模式与插件提示词，1 条。
+- [`dsh-creator-mode/`](dsh-creator-mode/)：DSH 创造模式与插件提示词，1 条；
+- [`nvtx/`](nvtx/)：NVTX 标注与 Nsight Systems 时间线，7 条。
 
 按现象查表，不要只按标题猜。
 
@@ -59,6 +60,19 @@
 | 生成的架构图只有模块名，缺上下游、token 构成和消费端 | [任意模型架构示意图](dsh-creator-mode/dsh-model-architecture-visualization.md) |
 | 不知道 agent 该从工作目录哪些文件、按什么结构整理模型信息 | [任意模型架构示意图](dsh-creator-mode/dsh-model-architecture-visualization.md) |
 
+## NVTX 症状速查
+
+| 你看到的现象 | 先读 |
+| --- | --- |
+| 第一次接触 NVTX，不知道从哪开始 | [第一次用 NVTX](nvtx/nvtx-first-range.md) |
+| 时间线里只有 kernel 名，看不出数据加载/forward/backward | [第一次用 NVTX](nvtx/nvtx-first-range.md) |
+| range 嵌套错乱、pop 关错、想跨线程标注 | [range 语义](nvtx/nvtx-range-model.md) |
+| 打了 NVTX，但报告里没有、`nvtx_sum` 为空 | [看不到 NVTX 的排查](nvtx/nvtx-not-showing.md) |
+| 报告太大，只想采一个阶段；capture-range 不触发 | [nsys 工作流](nvtx/nvtx-nsys-workflow.md) |
+| Python/PyTorch 里加标注；分不清 `record_function` 和 NVTX | [Python 与 PyTorch](nvtx/nvtx-python-pytorch.md) |
+| 想加 step/shape/payload、按库分 domain、减少开销 | [进阶 API](nvtx/nvtx-advanced-api.md) |
+| 想用 ncu 只测某段 kernel、把结果接入脚本 | [消费端与自动化](nvtx/nvtx-ecosystem-and-automation.md) |
+
 ## 图编译按类别
 
 | 类别 | 条目 |
@@ -85,6 +99,13 @@
 | 类别 | 条目 |
 | --- | --- |
 | 方法（1） | [任意模型架构示意图](dsh-creator-mode/dsh-model-architecture-visualization.md) |
+
+## NVTX 按类别
+
+| 类别 | 条目 |
+| --- | --- |
+| 方法（3） | [第一次用 NVTX](nvtx/nvtx-first-range.md) · [range 语义](nvtx/nvtx-range-model.md) · [进阶 API](nvtx/nvtx-advanced-api.md) |
+| 性能/工具（4） | [nsys 工作流](nvtx/nvtx-nsys-workflow.md) · [Python 与 PyTorch](nvtx/nvtx-python-pytorch.md) · [看不到 NVTX 的排查](nvtx/nvtx-not-showing.md) · [消费端与自动化](nvtx/nvtx-ecosystem-and-automation.md) |
 
 ## 怎么读一条经验
 

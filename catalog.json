@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "count": 32,
+  "count": 39,
   "categories": [
     "methodology",
     "compile",
@@ -208,6 +208,90 @@
       ],
       "updated": "2026-11-02",
       "path": "experiences/gpu-profiling/npu-to-gpu-profiling-mapping.md"
+    },
+    {
+      "name": "nvtx-advanced-api",
+      "title": "NVTX 进阶：attributes、payload、domain、registered string 与 C++ RAII",
+      "description": "想给 range 加 shape/step 等附加数据、按库分 domain、减少字符串开销、用 C++ RAII 或自动函数标注、控制 NVTX 开销时读这条。含 C/C++/Python 属性写法、registered string、payload 和开销边界。",
+      "category": "methodology",
+      "tags": [
+        "nvtx",
+        "attributes",
+        "payload",
+        "domains",
+        "cpp",
+        "raii"
+      ],
+      "symptoms": [
+        "想给 range 附加 step、shape、loss 等数值",
+        "多个库的 range 混在一起，需要隔离",
+        "动态字符串让 NVTX 开销变大",
+        "手动 push/pop 容易漏 pop",
+        "想知道 NVTX 在热路径里能不能用"
+      ],
+      "stacks": [
+        "nvtx",
+        "cuda",
+        "cpp",
+        "python",
+        "nsys"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/nvtx/nvtx-advanced-api.md"
+    },
+    {
+      "name": "nvtx-first-range",
+      "title": "第一次用 NVTX：5 分钟给时间线加上阶段名",
+      "description": "从没接触过 NVTX、Nsight Systems 时间线里只有 kernel 名、看不出数据加载/forward/backward 对应哪段 GPU 活动时读这条。给出 C++ 与 Python 的最小可运行示例、nsys 采集命令和 nvtx_sum 验证方式。",
+      "category": "methodology",
+      "tags": [
+        "nvtx",
+        "nsys",
+        "cuda",
+        "profiling",
+        "quickstart"
+      ],
+      "symptoms": [
+        "第一次接触 NVTX，不知道从哪里开始",
+        "时间线里只有 kernel 名，看不出训练或推理的阶段",
+        "在代码里加了 NVTX，但报告里找不到"
+      ],
+      "stacks": [
+        "nvtx",
+        "nsys",
+        "cuda",
+        "python"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/nvtx/nvtx-first-range.md"
+    },
+    {
+      "name": "nvtx-range-model",
+      "title": "NVTX range 的语义：mark、push/pop、start/end、线程与 domain",
+      "description": "分不清 mark 和 range、range 嵌套错乱、pop 关错范围、想跨线程标注、多个库的标注混在一起时读这条。讲清 push/pop 的线程栈、start/end 句柄、domain 隔离、category 分组和资源命名的选择。",
+      "category": "methodology",
+      "tags": [
+        "nvtx",
+        "ranges",
+        "domains",
+        "threads",
+        "nsys"
+      ],
+      "symptoms": [
+        "range 嵌套层级和代码结构对不上",
+        "pop 之后发现关错了 range",
+        "想标一个跨线程的范围，不知道用哪个 API",
+        "多个库的 NVTX 名字混在一起",
+        "不知道 category 和 domain 有什么区别"
+      ],
+      "stacks": [
+        "nvtx",
+        "nsys",
+        "cuda",
+        "python"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/nvtx/nvtx-range-model.md"
     },
     {
       "name": "torch-compile-backend-error",
@@ -650,6 +734,120 @@
       ],
       "updated": "2026-11-02",
       "path": "experiences/gpu-profiling/nsight-systems-timeline-reading.md"
+    },
+    {
+      "name": "nvtx-ecosystem-and-automation",
+      "title": "NVTX 的消费端：ncu 过滤、SQLite 与自动化",
+      "description": "已有 NVTX、想只 profile 某个 range 里的 kernel、想用 ncu 缩小范围、想把 NVTX/时间线数据接入脚本或 CI、或分不清 NVTX 与 PyTorch Profiler 时读这条。覆盖 ncu 的 NVTX 过滤、nsys SQLite、CSV/JSON 和 CUDA Graphs 投影。",
+      "category": "performance",
+      "tags": [
+        "nvtx",
+        "ncu",
+        "nsys",
+        "sqlite",
+        "automation",
+        "pytorch"
+      ],
+      "symptoms": [
+        "只想 profile 某个阶段的 kernel",
+        "ncu 一次采太多 kernel，想知道怎么按 NVTX 过滤",
+        "想把 NVTX 统计接入脚本或 CI",
+        "SQLite 里 registered string 的名字是 NULL",
+        "CUDA Graphs 和 NVTX 对不上"
+      ],
+      "stacks": [
+        "nvtx",
+        "nsys",
+        "ncu",
+        "cuda",
+        "pytorch",
+        "python"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/nvtx/nvtx-ecosystem-and-automation.md"
+    },
+    {
+      "name": "nvtx-not-showing",
+      "title": "NVTX 打了但 Nsight Systems 里看不到：从 trace 到 range 的排查顺序",
+      "description": "代码里明明有 nvtxRangePush、报告里却没有 NVTX 行、某个 range 缺失、名字不对、只有部分线程、capture-range 不触发时读这条。按 trace 开关、注入、range 生命周期、domain、进程和 registered string 逐层排查。",
+      "category": "performance",
+      "tags": [
+        "nvtx",
+        "nsys",
+        "troubleshooting",
+        "capture-range",
+        "domains"
+      ],
+      "symptoms": [
+        "Nsight Systems 报告里没有 NVTX 行",
+        "nvtx_sum 输出为空",
+        "只有部分 range 或部分线程出现",
+        "range 名字为空或不完整",
+        "capture-range 不触发，提示 No reports were generated"
+      ],
+      "stacks": [
+        "nvtx",
+        "nsys",
+        "cuda",
+        "python"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/nvtx/nvtx-not-showing.md"
+    },
+    {
+      "name": "nvtx-nsys-workflow",
+      "title": "用 Nsight Systems 采集和读 NVTX：trace、capture-range、report、SQLite",
+      "description": "打了 NVTX 但报告里没有、报告太大、只想采某一段、想用命令行统计或脚本分析时读这条。给出 --trace=nvtx、--capture-range=nvtx 的 registered string 要求、domain 过滤、nvtx_sum 读法、--filter-nvtx 和 SQLite 查询。",
+      "category": "performance",
+      "tags": [
+        "nvtx",
+        "nsys",
+        "nsight-systems",
+        "capture-range",
+        "sqlite"
+      ],
+      "symptoms": [
+        "nsys 报告里没有 NVTX 行",
+        "报告太大，想只采一个阶段",
+        "capture-range 不触发，生成不了报告",
+        "想按某个 range 过滤 kernel 统计",
+        "想用脚本读取 NVTX 数据"
+      ],
+      "stacks": [
+        "nvtx",
+        "nsys",
+        "cuda"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/nvtx/nvtx-nsys-workflow.md"
+    },
+    {
+      "name": "nvtx-python-pytorch",
+      "title": "Python 与 PyTorch 里的 NVTX：annotate、torch.cuda.nvtx、emit_nvtx",
+      "description": "在 Python 训练或推理里加 NVTX、分不清 nvtx.annotate、torch.cuda.nvtx、record_function、emit_nvtx、不知道 DataLoader 多进程怎么标注时读这条。含可运行示例、PyTorch API 对照、autograd NVTX 和常见误用。",
+      "category": "performance",
+      "tags": [
+        "nvtx",
+        "python",
+        "pytorch",
+        "nsys",
+        "dataloader"
+      ],
+      "symptoms": [
+        "Python 程序里不知道怎么打 NVTX",
+        "分不清 torch.cuda.nvtx 和 record_function",
+        "想给 autograd 算子自动加标注",
+        "DataLoader 多进程里打了 range 但看不到",
+        "PyTorch Profiler 的 trace 和 nsys 时间线对不上"
+      ],
+      "stacks": [
+        "nvtx",
+        "python",
+        "pytorch",
+        "nsys"
+      ],
+      "updated": "2026-11-03",
+      "path": "experiences/nvtx/nvtx-python-pytorch.md"
     },
     {
       "name": "pytorch-profiler-and-memory-snapshot",
