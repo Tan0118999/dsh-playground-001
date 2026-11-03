@@ -1,9 +1,10 @@
 # 经验条目
 
-共 **31 条**经验，分为两个主题：
+共 **38 条**经验，分为三个主题：
 
 - [`gpu-graph-compile/`](gpu-graph-compile/)：GPU 图编译 debug，16 条；
-- [`gpu-profiling/`](gpu-profiling/)：GPU Profiling 与性能分析，15 条。
+- [`gpu-profiling/`](gpu-profiling/)：GPU Profiling 与性能分析，15 条；
+- [`nvtx/`](nvtx/)：NVTX 标注与 Nsight Systems 时间线，7 条。
 
 按现象查表，不要只按标题猜。
 
@@ -50,6 +51,19 @@
 | 想查命令/指标/阈值 | [命令与指标速查](gpu-profiling/gpu-profiling-cli-cheatsheet.md) |
 | 手头是 AMD/Intel/Apple/TPU | [跨平台工具](gpu-profiling/gpu-other-platform-tools.md) |
 
+## NVTX 症状速查
+
+| 你看到的现象 | 先读 |
+| --- | --- |
+| 第一次接触 NVTX，不知道从哪开始 | [第一次用 NVTX](nvtx/nvtx-first-range.md) |
+| 时间线里只有 kernel 名，看不出数据加载/forward/backward | [第一次用 NVTX](nvtx/nvtx-first-range.md) |
+| range 嵌套错乱、pop 关错、想跨线程标注 | [range 语义](nvtx/nvtx-range-model.md) |
+| 打了 NVTX，但报告里没有、`nvtx_sum` 为空 | [看不到 NVTX 的排查](nvtx/nvtx-not-showing.md) |
+| 报告太大，只想采一个阶段；capture-range 不触发 | [nsys 工作流](nvtx/nvtx-nsys-workflow.md) |
+| Python/PyTorch 里加标注；分不清 `record_function` 和 NVTX | [Python 与 PyTorch](nvtx/nvtx-python-pytorch.md) |
+| 想加 step/shape/payload、按库分 domain、减少开销 | [进阶 API](nvtx/nvtx-advanced-api.md) |
+| 想用 ncu 只测某段 kernel、把结果接入脚本 | [消费端与自动化](nvtx/nvtx-ecosystem-and-automation.md) |
+
 ## 图编译按类别
 
 | 类别 | 条目 |
@@ -70,6 +84,13 @@
 | Nsight Compute/kernel（3） | [ncu 第一轮](gpu-profiling/nsight-compute-first-pass.md) · [stall/访存](gpu-profiling/gpu-warp-stall-and-memory-analysis.md) · [naive SGEMM](gpu-profiling/gpu-naive-sgemm-bottleneck.md) |
 | 工具/环境（4） | [PyTorch Profiler](gpu-profiling/pytorch-profiler-and-memory-snapshot.md) · [监控](gpu-profiling/gpu-monitoring-and-throttling.md) · [权限/容器](gpu-profiling/gpu-profiling-permissions-and-containers.md) · [跨平台](gpu-profiling/gpu-other-platform-tools.md) |
 | 速查（1） | [命令与指标](gpu-profiling/gpu-profiling-cli-cheatsheet.md) |
+
+## NVTX 按类别
+
+| 类别 | 条目 |
+| --- | --- |
+| 方法（3） | [第一次用 NVTX](nvtx/nvtx-first-range.md) · [range 语义](nvtx/nvtx-range-model.md) · [进阶 API](nvtx/nvtx-advanced-api.md) |
+| 性能/工具（4） | [nsys 工作流](nvtx/nvtx-nsys-workflow.md) · [Python 与 PyTorch](nvtx/nvtx-python-pytorch.md) · [看不到 NVTX 的排查](nvtx/nvtx-not-showing.md) · [消费端与自动化](nvtx/nvtx-ecosystem-and-automation.md) |
 
 ## 怎么读一条经验
 
